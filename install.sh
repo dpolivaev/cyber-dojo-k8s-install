@@ -88,6 +88,26 @@ helm upgrade \
   ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
+# CREATOR
+REPO=creator
+IMAGE="${CYBER_DOJO_CREATOR_IMAGE}"
+PORT="${CYBER_DOJO_CREATOR_PORT}"
+TAG="${CYBER_DOJO_CREATOR_TAG}"
+SHA="${CYBER_DOJO_CREATOR_SHA}"
+REPO_VALUES_YML=creator-values.yaml
+
+curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
+  > ${TMP_VALUES_YML}
+
+helm upgrade \
+  --install \
+  --namespace=${NAMESPACE} \
+  --set-string containers[0].image=${IMAGE} \
+  --set-string containers[0].tag=${TAG} \
+  --values ${TMP_VALUES_YML} \
+  ${NAMESPACE}-${REPO} \
+  ${HELM_REPO}
+
 # CUSTOM_CHOOSER
 REPO=custom-chooser
 IMAGE="${CYBER_DOJO_CUSTOM_CHOOSER_IMAGE}"
@@ -184,26 +204,6 @@ helm upgrade \
   ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
-# CREATOR
-REPO=creator
-IMAGE="${CYBER_DOJO_CREATOR_IMAGE}"
-PORT="${CYBER_DOJO_CREATOR_PORT}"
-TAG="${CYBER_DOJO_CREATOR_TAG}"
-SHA="${CYBER_DOJO_CREATOR_SHA}"
-REPO_VALUES_YML=creator-values.yaml
-
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
-  > ${TMP_VALUES_YML}
-
-helm upgrade \
-  --install \
-  --namespace=${NAMESPACE} \
-  --set-string containers[0].image=${IMAGE} \
-  --set-string containers[0].tag=${TAG} \
-  --values ${TMP_VALUES_YML} \
-  ${NAMESPACE}-${REPO} \
-  ${HELM_REPO}
-
 # DIFFER
 REPO=differ
 IMAGE="${CYBER_DOJO_DIFFER_IMAGE}"
@@ -228,30 +228,6 @@ helm upgrade \
   ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
-# NGINX
-REPO=nginx
-IMAGE="${CYBER_DOJO_NGINX_IMAGE}"
-PORT="${CYBER_DOJO_NGINX_PORT}"
-TAG="${CYBER_DOJO_NGINX_TAG}"
-SHA="${CYBER_DOJO_NGINX_SHA}"
-REPO_VALUES_YML=nginx-values.yaml
-REPO_ANOTHER_YML=nginx-ingress-prod.yaml
-
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
-  > ${TMP_VALUES_YML}
-  
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_ANOTHER_YML} \
-  > ${TMP_ANOTHER_YML}
-
-helm upgrade \
-  --install \
-  --namespace="${NAMESPACE}" \
-  --set-string containers[0].tag=${TAG} \
-  --values ${TMP_VALUES_YML} \
-  --values ${TMP_ANOTHER_YML} \
- ${NAMESPACE}-${REPO} \
-  ${HELM_REPO}
-  
 # RUNNER
 REPO=runner
 IMAGE="${CYBER_DOJO_RUNNER_IMAGE}"
@@ -287,7 +263,7 @@ REPO_ANOTHER_YML=saver-pvc-prod.yml
 
 curl ${GITHUB_RAW_CONTENT}/dpolivaev/${REPO}/master/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
-  
+
 curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_ANOTHER_YML} \
   > ${TMP_ANOTHER_YML}
 
@@ -299,6 +275,31 @@ helm upgrade \
   --values ${TMP_ANOTHER_YML} \
   ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
+
+# REPLER
+REPO=repler
+IMAGE="${CYBER_DOJO_REPLER_IMAGE}"
+PORT="${CYBER_DOJO_REPLER_PORT}"
+TAG="${CYBER_DOJO_REPLER_TAG}"
+SHA="${CYBER_DOJO_REPLER_SHA}"
+REPO_VALUES_YML=repler-values.yaml
+
+curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
+  > ${TMP_VALUES_YML}
+
+helm upgrade \
+  --install \
+  --namespace=${NAMESPACE} \
+  --set-string containers[0].image=${IMAGE} \
+  --set-string containers[0].tag=${TAG} \
+  --set service.port=${PORT} \
+  --set containers[0].livenessProbe.port=${PORT} \
+  --set containers[0].readinessProbe.port=${PORT} \
+  --set-string service.annotations."prometheus\.io/port"=${PORT} \
+  --values ${TMP_VALUES_YML} \
+  ${NAMESPACE}-${REPO} \
+  ${HELM_REPO}
+
 
 # SHAS
 
@@ -344,6 +345,30 @@ helm upgrade \
   ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
-# clean  
+# NGINX
+REPO=nginx
+IMAGE="${CYBER_DOJO_NGINX_IMAGE}"
+PORT="${CYBER_DOJO_NGINX_PORT}"
+TAG="${CYBER_DOJO_NGINX_TAG}"
+SHA="${CYBER_DOJO_NGINX_SHA}"
+REPO_VALUES_YML=nginx-values.yaml
+REPO_ANOTHER_YML=nginx-ingress-prod.yaml
+
+curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
+  > ${TMP_VALUES_YML}
+
+curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_ANOTHER_YML} \
+  > ${TMP_ANOTHER_YML}
+
+helm upgrade \
+  --install \
+  --namespace="${NAMESPACE}" \
+  --set-string containers[0].tag=${TAG} \
+  --values ${TMP_VALUES_YML} \
+  --values ${TMP_ANOTHER_YML} \
+ ${NAMESPACE}-${REPO} \
+  ${HELM_REPO}
+
+# clean
 rm ${TMP_VALUES_YML}
 rm ${TMP_ANOTHER_YML}
