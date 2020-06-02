@@ -261,9 +261,9 @@ SHA="${CYBER_DOJO_SAVER_SHA}"
 REPO_VALUES_YML=saver-values.yml
 REPO_ANOTHER_YML=saver-pvc-prod.yml
 
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
+# curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
-# curl ${GITHUB_RAW_CONTENT}/dpolivaev/${REPO}/master/.circleci/${REPO_VALUES_YML} \
+curl ${GITHUB_RAW_CONTENT}/dpolivaev/${REPO}/master/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
 
 curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_ANOTHER_YML} \
@@ -336,9 +336,9 @@ TAG="${CYBER_DOJO_WEB_TAG}"
 SHA="${CYBER_DOJO_WEB_SHA}"
 REPO_VALUES_YML=web-values.yml
 
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
+# curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
-# curl ${GITHUB_RAW_CONTENT}/dpolivaev/${REPO}/master/.circleci/${REPO_VALUES_YML} \
+curl ${GITHUB_RAW_CONTENT}/dpolivaev/${REPO}/master/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
 
 helm upgrade \
