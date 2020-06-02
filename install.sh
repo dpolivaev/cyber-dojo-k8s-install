@@ -12,7 +12,7 @@ readonly GITHUB_RAW_CONTENT=https://raw.githubusercontent.com
 readonly GITHUB_ORGANIZATION=cyber-dojo
 export $(curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/versioner/master/app/.env)
 readonly TMP_VALUES_YML=$(mktemp /tmp/values.yml.tmp.XXXXXXXXXX)
-readonly TMP_ANOTHER_YML=$(mktemp /tmp/ingress.yml.tmp.XXXXXXXXXX)
+readonly TMP_STAGE_SPECIFIC_VALUES_YML=$(mktemp /tmp/ingress.yml.tmp.XXXXXXXXXX)
 readonly HELM_REPO=./helm-charts
 readonly NAMESPACE=default
 
@@ -259,22 +259,22 @@ PORT="${CYBER_DOJO_SAVER_PORT}"
 TAG="${CYBER_DOJO_SAVER_TAG}"
 SHA="${CYBER_DOJO_SAVER_SHA}"
 REPO_VALUES_YML=saver-values.yml
-REPO_ANOTHER_YML=saver-pvc-prod.yml
+REPO_STAGE_SPECIFIC_VALUES_YML=saver-pvc-prod.yml
 
 # curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
 curl ${GITHUB_RAW_CONTENT}/dpolivaev/${REPO}/master/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
 
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_ANOTHER_YML} \
-  > ${TMP_ANOTHER_YML}
+curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_STAGE_SPECIFIC_VALUES_YML} \
+  > ${TMP_STAGE_SPECIFIC_VALUES_YML}
 
 helm upgrade \
   --install \
   --namespace=${NAMESPACE} \
   --set-string containers[0].tag=${TAG} \
   --values ${TMP_VALUES_YML} \
-  --values ${TMP_ANOTHER_YML} \
+  --values ${TMP_STAGE_SPECIFIC_VALUES_YML} \
   ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
@@ -356,23 +356,23 @@ PORT="${CYBER_DOJO_NGINX_PORT}"
 TAG="${CYBER_DOJO_NGINX_TAG}"
 SHA="${CYBER_DOJO_NGINX_SHA}"
 REPO_VALUES_YML=nginx-values.yaml
-REPO_ANOTHER_YML=nginx-ingress-prod.yaml
+REPO_STAGE_SPECIFIC_VALUES_YML=nginx-ingress-prod.yaml
 
 curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
 
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_ANOTHER_YML} \
-  > ${TMP_ANOTHER_YML}
+curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_STAGE_SPECIFIC_VALUES_YML} \
+  > ${TMP_STAGE_SPECIFIC_VALUES_YML}
 
 helm upgrade \
   --install \
   --namespace="${NAMESPACE}" \
   --set-string containers[0].tag=${TAG} \
   --values ${TMP_VALUES_YML} \
-  --values ${TMP_ANOTHER_YML} \
+  --values ${TMP_STAGE_SPECIFIC_VALUES_YML} \
  ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
 # clean
 rm ${TMP_VALUES_YML}
-rm ${TMP_ANOTHER_YML}
+rm ${TMP_STAGE_SPECIFIC_VALUES_YML}
