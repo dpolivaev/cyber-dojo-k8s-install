@@ -206,27 +206,17 @@ helm upgrade \
 
 # DIFFER
 REPO=differ
-IMAGE="${CYBER_DOJO_DIFFER_IMAGE}"
-PORT="${CYBER_DOJO_DIFFER_PORT}"
-TAG="${CYBER_DOJO_DIFFER_TAG}"
 SHA="${CYBER_DOJO_DIFFER_SHA}"
 REPO_VALUES_YML=differ-values.yaml
 
 curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
 
-helm upgrade \
-  --install \
-  --namespace=${NAMESPACE} \
-  --set-string containers[0].image=${IMAGE} \
-  --set-string containers[0].tag=${TAG} \
-  --set service.port=${PORT} \
-  --set containers[0].livenessProbe.port=${PORT} \
-  --set containers[0].readinessProbe.port=${PORT} \
-  --set-string service.annotations."prometheus\.io/port"=${PORT} \
-  --values ${TMP_VALUES_YML} \
-  ${NAMESPACE}-${REPO} \
-  ${HELM_REPO}
+source <(curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/master/.circleci/helm_upgrade.sh)
+
+helm_upgrade "${NAMESPACE}" \
+   "${CYBER_DOJO_DIFFER_IMAGE}" "${CYBER_DOJO_DIFFER_TAG}" "${CYBER_DOJO_DIFFER_PORT}" \
+   "${TMP_VALUES_YML}" "${REPO}" "${HELM_REPO}"
 
 # RUNNER
 REPO=runner
