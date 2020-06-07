@@ -17,6 +17,7 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+{{- if .Values.ingress.hosts }}
   tls:
     - hosts:
         {{- range .Values.ingress.hosts }}
@@ -33,5 +34,9 @@ spec:
               serviceName: {{ template "app.fullname" $ }}
               servicePort: {{ $.Values.service.port | default 80 }}
   {{- end }}
-  
+{{- else }}
+  backend:             
+    serviceName: {{ template "app.fullname" $ }}
+    servicePort: {{ $.Values.service.port | default 80 }}
+{{- end }}
 {{- end }}
