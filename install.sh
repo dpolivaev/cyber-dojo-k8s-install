@@ -346,20 +346,16 @@ PORT="${CYBER_DOJO_NGINX_PORT}"
 TAG="${CYBER_DOJO_NGINX_TAG}"
 SHA="${CYBER_DOJO_NGINX_SHA}"
 REPO_VALUES_YML=nginx-values.yaml
-REPO_STAGE_SPECIFIC_VALUES_YML=nginx-ingress-prod.yaml
 
 curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_VALUES_YML} \
   > ${TMP_VALUES_YML}
-
-curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circleci/${REPO_STAGE_SPECIFIC_VALUES_YML} \
-  > ${TMP_STAGE_SPECIFIC_VALUES_YML}
 
 helm upgrade \
   --install \
   --namespace="${NAMESPACE}" \
   --set-string containers[0].tag=${TAG} \
   --values ${TMP_VALUES_YML} \
-  --values ${TMP_STAGE_SPECIFIC_VALUES_YML} \
+  --values nginx-ingress.yaml \
  ${NAMESPACE}-${REPO} \
   ${HELM_REPO}
 
