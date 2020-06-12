@@ -13,7 +13,8 @@ readonly GITHUB_ORGANIZATION=cyber-dojo
 export $(curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/versioner/master/app/.env)
 readonly TMP_VALUES_YML=$(mktemp /tmp/values.yml.tmp.XXXXXXXXXX)
 readonly TMP_STAGE_SPECIFIC_VALUES_YML=$(mktemp /tmp/ingress.yml.tmp.XXXXXXXXXX)
-readonly HELM_REPO="praqma/cyber-dojo-service --version 0.2.5"
+#readonly HELM_REPO="praqma/cyber-dojo-service --version 0.2.5"
+readonly HELM_REPO="./../cyber-dojo-service-0.2.5"
 readonly NAMESPACE=default
 
 readonly REPO_VALUES_YML=k8s-general-values.yml
@@ -182,7 +183,7 @@ source <(curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circl
 
 helm_upgrade "${NAMESPACE}" \
    "${CYBER_DOJO_SAVER_IMAGE}" "${CYBER_DOJO_SAVER_TAG}" "${CYBER_DOJO_SAVER_PORT}" \
-   "/home/dimitry/cyber-dojo/saver/.circleci/${REPO_VALUES_YML}" "${TMP_STAGE_SPECIFIC_VALUES_YML}" \
+   "/home/dimitry/cyber-dojo/saver/.circleci/${REPO_VALUES_YML}" "./saver-pvc.yml" \
    "${REPO}" "${HELM_REPO}"
 
 # REPLER
@@ -245,7 +246,7 @@ source <(curl ${GITHUB_RAW_CONTENT}/${GITHUB_ORGANIZATION}/${REPO}/${SHA}/.circl
 
 helm_upgrade "${NAMESPACE}" \
    "${CYBER_DOJO_NGINX_IMAGE}" "${CYBER_DOJO_NGINX_TAG}" "${CYBER_DOJO_NGINX_PORT}" \
-   "${TMP_VALUES_YML}" "./nginx-ingress.yaml" \
+   "${TMP_VALUES_YML}" "./nginx-ingress.yml" \
    "${REPO}" "${HELM_REPO}"
 
 # clean
